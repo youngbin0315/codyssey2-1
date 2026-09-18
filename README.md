@@ -49,7 +49,7 @@
 ## 설치 및 실행
 
 ```bash
-git clone https://github.com/<your-id>/budget-app.git
+git clone https://github.com/youngbin0315/codyssey2-1.git
 cd budget-app
 python -m budget_app --help
 ```
