@@ -1,0 +1,4 @@
+{"id": "T0001", "type": "expense", "date": "2026-09-20", "amount": 1550, "category": "transport", "memo": "교통비", "tags": []}
+{"id": "T0002", "type": "expense", "date": "2026-09-20", "amount": 13500, "category": "food", "memo": "점심식사", "tags": ["라멘"]}
+{"id": "T0003", "type": "expense", "date": "2026-09-20", "amount": 23200, "category": "food", "memo": "저녁식사", "tags": ["치킨"]}
+{"id": "T0004", "type": "expense", "date": "2026-09-27", "amount": 20800, "category": "food", "memo": "야식", "tags": ["피자"]}
