@@ -271,7 +271,7 @@ def add_transaction(
 ## 실행 예시
  
 아래 화면은 모두 시연 전용 폴더(`--data-dir ./demo_data`)에서 실행한 결과입니다.
-사진은 `docs/images/` 폴더에 있고, 파일 이름의 번호가 촬영 순서입니다.
+사진은 `pictures/` 폴더에 있고, 파일 이름의 번호가 촬영 순서입니다.
  
 ### 과제 목표별 증빙 사진
  
@@ -299,7 +299,7 @@ python -m budget_app --data-dir ./demo_data category list
 Get-ChildItem .\demo_data
 ```
  
-![초기화](docs/images/01_init.png)
+![초기화](pictures/01_init.png)
  
 - 기본 카테고리 5개(`food, transport, rent, salary, etc`)가 자동 생성됩니다.
 - `budgets.jsonl`, `categories.jsonl`, `transactions.jsonl` 3개 파일이 만들어집니다.
@@ -313,13 +313,13 @@ Get-ChildItem .\demo_data
 python -m budget_app --data-dir ./demo_data add
 ```
  
-![거래 추가](docs/images/02-1_add.png)
+![거래 추가](pictures/02-1_add.png)
  
 - 저장이 끝나면 생성된 거래 id(`T0001` ~ `T0003`)가 출력됩니다.
 - 메모와 태그는 선택 항목이라 엔터로 건너뛸 수 있습니다.
 **입력 검증**: 잘못된 값을 넣으면 해당 항목만 다시 물어봅니다.
  
-![입력 검증](docs/images/02-2_add_validation.png)
+![입력 검증](pictures/02-2_add_validation.png)
  
 | 잘못된 입력 | 결과 |
 |---|---|
@@ -345,7 +345,7 @@ python -m budget_app --data-dir ./demo_data search --q 점심식사
 python -m budget_app --data-dir ./demo_data search --from 2026-10-10 --to 2026-10-11 --type expense
 ```
  
-![조회와 검색](docs/images/03-05_list_search.png)
+![조회와 검색](pictures/03-05_list_search.png)
  
 - 모든 결과가 날짜 최신순입니다.
 - 카테고리, 태그, 메모 키워드, 기간, 타입 조건으로 검색할 수 있고 여러 조건은 함께(AND) 적용됩니다.
@@ -362,7 +362,7 @@ python -m budget_app --data-dir ./demo_data category remove snack
 python -m budget_app --data-dir ./demo_data category list
 ```
  
-![카테고리 관리](docs/images/06_category.png)
+![카테고리 관리](pictures/06_category.png)
  
 - 사용 중인 `food`는 삭제가 거부되고, 원인과 해결 힌트(`--replacement` 옵션)가 출력됩니다.
 - 사용하지 않는 `snack`은 정상적으로 삭제됩니다.
@@ -376,7 +376,7 @@ python -m budget_app --data-dir ./demo_data category list
 python -m budget_app --data-dir ./demo_data update --id T0003 --amount 31000 --memo "저녁 식사"
 ```
  
-![거래 수정](docs/images/07_update.png)
+![거래 수정](pictures/07_update.png)
  
 - 금액과 메모만 바뀌고 날짜, 카테고리, 태그(`#돈가스`)는 그대로입니다.
 - 이후 시연 숫자를 맞추기 위해 같은 방식으로 원래 값(29800, 저녁식사)으로 되돌렸습니다.
@@ -384,7 +384,7 @@ python -m budget_app --data-dir ./demo_data update --id T0003 --amount 31000 --m
 ```powershell
 python -m budget_app --data-dir ./demo_data update --id T9999 --amount 1000
 ```
-![없는 id 수정](docs/images/07-2_update_error.png)
+![없는 id 수정](pictures/07-2_update_error.png)
 -->
  
 ---
@@ -395,7 +395,7 @@ python -m budget_app --data-dir ./demo_data update --id T9999 --amount 1000
 python -m budget_app --data-dir ./demo_data delete --id T0003
 ```
  
-![거래 삭제](docs/images/08_delete.png)
+![거래 삭제](pictures/08_delete.png)
  
 - 삭제한 거래(`T0003`)가 목록에서 사라집니다.
 - 파일 전체를 임시 파일에 다시 쓴 뒤 교체하는 방식이라 중간에 중단돼도 원본이 깨지지 않습니다.
@@ -408,7 +408,7 @@ python -m budget_app --data-dir ./demo_data delete --id T9999
 echo $LASTEXITCODE
 ```
  
-![에러 처리](docs/images/09_error_exitcode.png)
+![에러 처리](pictures/09_error_exitcode.png)
  
 - 스택트레이스 대신 `[오류]`(원인)와 `[해결 힌트]`가 출력됩니다.
 - 오류 종료 코드는 `1`, 정상 종료는 `0`입니다.
@@ -423,7 +423,7 @@ python -m budget_app --data-dir ./demo_data summary --month 2026-10 --top 3
 python -m budget_app --data-dir ./demo_data summary --month 2020-01
 ```
  
-![예산과 요약](docs/images/10-11_budget_summary.png)
+![예산과 요약](pictures/10-11_budget_summary.png)
  
 - 예산 설정 전에는 수입, 지출, 잔액, 카테고리별 지출 TOP N만 나옵니다.
 - 예산 설정 후에는 사용률(%)이 추가되고, 초과하면 경고 문구가 출력됩니다.
@@ -437,7 +437,7 @@ python -m budget_app --data-dir ./demo_data import --from sample_import.csv
 python -m budget_app --data-dir ./demo_data list
 ```
  
-![import](docs/images/12_import.png)
+![import](pictures/12_import.png)
  
 - CSV 2건이 등록되고 처리 건수가 출력됩니다.
 - 새 거래의 id는 `T0005`, `T0006`입니다. 삭제된 `T0003`의 번호는 다시 쓰지 않고 가장 큰 번호 + 1로 부여합니다.
@@ -454,7 +454,7 @@ echo $LASTEXITCODE
 Get-ChildItem *.csv
 ```
  
-![export](docs/images/13_export.png)
+![export](pictures/13_export.png)
  
 - 월 단위(5건)와 기간 단위(3건) 모두 처리 건수와 CSV 내용을 확인할 수 있습니다.
 - `--month` 또는 `--from/--to` 조건이 없으면 에러(종료 코드 `1`)가 나고 파일은 만들어지지 않습니다.
@@ -471,7 +471,7 @@ Get-Content .\demo_data\budgets.jsonl
 Get-Content .\demo_data\categories.jsonl -Encoding UTF8
 ```
  
-![저장 파일 내용](docs/images/14_persist_files.png)
+![저장 파일 내용](pictures/14_persist_files.png)
  
 - `tags`는 `["생활비"]`처럼 리스트로 저장되고, 태그가 없으면 `[]`입니다.
 - 삭제, import, 수정 결과가 파일에 그대로 반영되어 있습니다.
@@ -482,6 +482,6 @@ python -m budget_app --data-dir ./demo_data list
 python -m budget_app --data-dir ./demo_data summary --month 2026-10
 ```
  
-![재실행 후 데이터 유지](docs/images/15_persist_rerun.png)
+![재실행 후 데이터 유지](pictures/15_persist_rerun.png)
  
 - 8번 항목(10-11) 사진과 총지출이 다른 이유는 그 사이 import로 택시 3,000원이 추가되었기 때문입니다. (64,650원 → 67,650원, 사용률 215.5% → 225.5%)
