@@ -20,6 +20,7 @@
 - [프로젝트 구조](#프로젝트-구조)
 - [설계 포인트](#설계-포인트)
 - [종료 코드 & 에러 처리](#종료-코드--에러-처리)
+- [실행 예시](#실행-예시)
 
 ---
 
@@ -50,9 +51,12 @@
 
 ```bash
 git clone https://github.com/youngbin0315/codyssey2-1.git
-cd budget-app
+cd codyssey2-1
 python -m budget_app --help
 ```
+
+> `python -m budget_app ...` 명령은 `budget_app/` 폴더가 보이는 **레포 최상위 폴더**에서 실행해야 합니다.
+> `budget_app/` 안의 `.py` 파일을 직접 실행(예: `python decorators.py`)하면 상대 import 오류가 납니다.
 
 ---
 
@@ -69,11 +73,11 @@ python -m budget_app add
 python -m budget_app list --limit 10
 
 # 4. 이번 달 요약
-python -m budget_app summary --month 2026-09 --top 3
+python -m budget_app summary --month 2026-10 --top 3
 
 # 5. 예산 설정 후 다시 요약 (초과 여부 확인)
-python -m budget_app budget set --month 2026-09 --amount 500000
-python -m budget_app summary --month 2026-09
+python -m budget_app budget set --month 2026-10 --amount 500000
+python -m budget_app summary --month 2026-10
 ```
 
 기본 데이터 저장 폴더는 `./data`이며, `--data-dir` 옵션으로 변경할 수 있습니다.
@@ -99,7 +103,7 @@ python -m budget_app search --help
 ```bash
 python -m budget_app add
 python -m budget_app list --limit 20
-python -m budget_app search --from 2026-09-01 --to 2026-09-30 --category food
+python -m budget_app search --from 2026-10-01 --to 2026-10-31 --category food
 python -m budget_app search --q 점심 --tag friend
 python -m budget_app update --id T0002 --amount 20000 --memo "수정된 메모"
 python -m budget_app delete --id T0003
@@ -111,8 +115,8 @@ python -m budget_app delete --id T0003
 ### 요약 / 예산
 
 ```bash
-python -m budget_app summary --month 2026-09 --top 3
-python -m budget_app budget set --month 2026-09 --amount 500000
+python -m budget_app summary --month 2026-10 --top 3
+python -m budget_app budget set --month 2026-10 --amount 500000
 ```
 
 ### 카테고리
@@ -129,9 +133,9 @@ python -m budget_app category remove food --replacement etc
 ### 가져오기 / 내보내기
 
 ```bash
-python -m budget_app import --from ./sample.csv
-python -m budget_app export --out ./sep.csv --month 2026-09
-python -m budget_app export --out ./range.csv --from 2026-09-01 --to 2026-09-15
+python -m budget_app import --from ./sample_import.csv
+python -m budget_app export --out ./out_2026-10.csv --month 2026-10
+python -m budget_app export --out ./out_range.csv --from 2026-10-08 --to 2026-10-10
 ```
 
 > `export`는 `--month` 또는 `--from`/`--to` 중 최소 하나의 조건이 반드시 필요합니다.
@@ -163,7 +167,7 @@ python -m budget_app export --out ./range.csv --from 2026-09-01 --to 2026-09-15
 
 ## CSV import/export 스키마
 
-인코딩 UTF-8, 첫 줄은 헤더 필수.
+인코딩 UTF-8(BOM 없음), 첫 줄은 헤더 필수.
 
 | column | required | 설명 |
 |---|---|---|
@@ -174,17 +178,34 @@ python -m budget_app export --out ./range.csv --from 2026-09-01 --to 2026-09-15
 | `memo` | N | 문자열 |
 | `tags` | N | 쉼표(`,`)로 구분된 문자열 |
 
-예시:
+예시 (저장소의 `sample_import.csv`와 같은 내용):
 
 ```csv
 date,type,category,amount,memo,tags
-2026-09-20,expense,transport,3000,택시,
-2026-09-21,income,salary,500000,보너스,bonus
+2026-10-09,expense,transport,3000,택시,
+2026-10-10,income,etc,50000,용돈,gift
 ```
 
 ---
 
 ## 프로젝트 구조
+
+저장소 전체 구성:
+
+```
+codyssey2-1/
+├── budget_app/          # 소스 코드 (아래 패키지 구조 참고)
+├── data/                # 기본 데이터 저장 폴더 (실행 시 자동 생성)
+├── demo_data/           # 시연에 사용한 샘플 데이터
+├── pictures/            # 실행 예시 화면 사진
+├── sample_import.csv    # import 시연용 입력 파일
+├── out_2026-10.csv      # export 시연 결과 (월 단위)
+├── out_range.csv        # export 시연 결과 (기간 지정)
+├── .gitignore
+└── README.md
+```
+
+소스 코드 패키지 구조:
 
 ```
 budget_app/
@@ -263,79 +284,83 @@ def add_transaction(
 - 오류 종료(잘못된 입력, 존재하지 않는 id/카테고리 등): `1`
 - 에러 발생 시 파이썬 스택트레이스 대신 아래 형식으로 출력됩니다.
 
-```
+```text
 [오류] 존재하지 않는 거래 id입니다: T9999
 [해결 힌트] id 또는 이름을 다시 확인해 주세요. list 명령으로 목록을 확인할 수 있습니다.
 ```
 
+---
+
 ## 실행 예시
- 
+
 아래 화면은 모두 시연 전용 폴더(`--data-dir ./demo_data`)에서 실행한 결과입니다.
 사진은 `pictures/` 폴더에 있고, 파일 이름의 번호가 촬영 순서입니다.
- 
+
+저장소에 포함된 시연용 파일은 다음과 같습니다.
+
+- `demo_data/`: 시연이 모두 끝난 **최종 상태**의 샘플 데이터입니다. 실행하면 파일이 바뀌므로 복사해서 사용하세요. (`Copy-Item -Recurse demo_data my_demo`)
+- `sample_import.csv`: import 시연에 사용한 입력 파일입니다.
+- `out_2026-10.csv`, `out_range.csv`: export 시연으로 만들어진 결과 파일입니다.
+
 ### 과제 목표별 증빙 사진
- 
+
 | 과제 목표 | 증빙 사진 |
 |---|---|
 | 파일 기반 저장 (JSONL, 영구 저장) | 01, 14, 15 |
 | Create (추가) | 02-1, 02-2 |
 | Read (조회) | 03-05 |
 | 검색 | 03-05 |
-| Update (수정) | 07 |
+| Update (수정) | 07, 07-2 |
 | Delete (삭제) | 08 |
 | 월별 요약 · 예산 | 10-11 |
 | 입출력 (import / export) | 12, 13 |
 | 카테고리 관리 | 06 |
-| 에러 처리 · 종료 코드 | 09, 13 |
- 
----
- 
-### 1. 초기화: 저장 파일 3개 자동 생성 (01)
- 
+| 에러 처리 · 종료 코드 | 07-2, 09, 13 |
+
+### 초기화: 저장 파일 3개 자동 생성 (사진 01)
+
 처음 실행하면 기본 카테고리가 만들어지고, 데이터 파일 3개가 자동으로 생성됩니다.
- 
+
 ```powershell
 python -m budget_app --data-dir ./demo_data category list
 Get-ChildItem .\demo_data
 ```
- 
+
 ![초기화](pictures/01_init.png)
- 
+
 - 기본 카테고리 5개(`food, transport, rent, salary, etc`)가 자동 생성됩니다.
 - `budgets.jsonl`, `categories.jsonl`, `transactions.jsonl` 3개 파일이 만들어집니다.
----
- 
-### 2. 거래 추가: Create (02-1, 02-2)
- 
+
+### 거래 추가: Create (사진 02-1, 02-2)
+
 `add`는 날짜, 타입, 카테고리, 금액, 메모, 태그를 순서대로 입력받는 대화형 방식입니다.
- 
+
 ```powershell
 python -m budget_app --data-dir ./demo_data add
 ```
- 
+
 ![거래 추가](pictures/02-1_add.png)
- 
+
 - 저장이 끝나면 생성된 거래 id(`T0001` ~ `T0003`)가 출력됩니다.
 - 메모와 태그는 선택 항목이라 엔터로 건너뛸 수 있습니다.
+
 **입력 검증**: 잘못된 값을 넣으면 해당 항목만 다시 물어봅니다.
- 
+
 ![입력 검증](pictures/02-2_add_validation.png)
- 
+
 | 잘못된 입력 | 결과 |
 |---|---|
 | 날짜 `2026-13-01` | 존재하지 않는 날짜 → 재입력 |
 | 타입 `지출` | income 또는 expense만 허용 → 재입력 |
 | 미등록 카테고리 `여행` | 등록 방법 안내 → 재입력 |
 | 금액 `-1000000` | 0보다 큰 정수만 허용 → 재입력 |
- 
+
 마지막 줄의 `[중단]`은 `Ctrl+C`로 입력을 취소한 결과이며, 취소하면 아무것도 저장되지 않습니다.
- 
----
- 
-### 3. 조회와 검색: Read (03-05)
- 
+
+### 조회와 검색: Read (사진 03-05)
+
 `list`는 최신순으로 출력하고 `--limit`으로 개수를 제한합니다. `search`는 조건을 조합해서 걸러냅니다.
- 
+
 ```powershell
 python -m budget_app --data-dir ./demo_data list
 python -m budget_app --data-dir ./demo_data list --limit 2
@@ -344,16 +369,15 @@ python -m budget_app --data-dir ./demo_data search --tag 돈가스
 python -m budget_app --data-dir ./demo_data search --q 점심식사
 python -m budget_app --data-dir ./demo_data search --from 2026-10-10 --to 2026-10-11 --type expense
 ```
- 
+
 ![조회와 검색](pictures/03-05_list_search.png)
- 
+
 - 모든 결과가 날짜 최신순입니다.
 - 카테고리, 태그, 메모 키워드, 기간, 타입 조건으로 검색할 수 있고 여러 조건은 함께(AND) 적용됩니다.
 - 태그를 검색할 때는 `#` 없이 입력합니다. (`#`은 화면에 보기 좋게 붙여서 출력하는 기호입니다.)
----
- 
-### 4. 카테고리 관리 (06)
- 
+
+### 카테고리 관리 (사진 06)
+
 ```powershell
 python -m budget_app --data-dir ./demo_data category add snack
 python -m budget_app --data-dir ./demo_data category list
@@ -361,91 +385,87 @@ python -m budget_app --data-dir ./demo_data category remove food
 python -m budget_app --data-dir ./demo_data category remove snack
 python -m budget_app --data-dir ./demo_data category list
 ```
- 
+
 ![카테고리 관리](pictures/06_category.png)
- 
+
 - 사용 중인 `food`는 삭제가 거부되고, 원인과 해결 힌트(`--replacement` 옵션)가 출력됩니다.
 - 사용하지 않는 `snack`은 정상적으로 삭제됩니다.
----
- 
-### 5. 거래 수정: Update (07)
- 
+
+### 거래 수정: Update (사진 07, 07-2)
+
 `update`는 옵션 기반이며, 지정한 필드만 바뀌고 나머지는 그대로 유지됩니다.
- 
+
 ```powershell
 python -m budget_app --data-dir ./demo_data update --id T0003 --amount 31000 --memo "저녁 식사"
 ```
- 
+
 ![거래 수정](pictures/07_update.png)
- 
+
 - 금액과 메모만 바뀌고 날짜, 카테고리, 태그(`#돈가스`)는 그대로입니다.
+- 메모처럼 공백이 들어간 값은 따옴표로 감싸서 입력합니다.
 - 이후 시연 숫자를 맞추기 위해 같은 방식으로 원래 값(29800, 저녁식사)으로 되돌렸습니다.
-<!-- 없는 id 수정 사진을 추가로 찍었다면 아래 주석을 풀어주세요.
+
+없는 id를 수정하려고 하면 오류 메시지와 해결 힌트가 출력되고 데이터는 바뀌지 않습니다.
+
 ```powershell
 python -m budget_app --data-dir ./demo_data update --id T9999 --amount 1000
 ```
+
 ![없는 id 수정](pictures/07-2_update_error.png)
--->
- 
----
- 
-### 6. 거래 삭제: Delete (08)
- 
+
+### 거래 삭제: Delete (사진 08)
+
 ```powershell
 python -m budget_app --data-dir ./demo_data delete --id T0003
 ```
- 
+
 ![거래 삭제](pictures/08_delete.png)
- 
+
 - 삭제한 거래(`T0003`)가 목록에서 사라집니다.
 - 파일 전체를 임시 파일에 다시 쓴 뒤 교체하는 방식이라 중간에 중단돼도 원본이 깨지지 않습니다.
----
- 
-### 7. 에러 처리와 종료 코드 (09)
- 
+
+### 에러 처리와 종료 코드 (사진 09)
+
 ```powershell
 python -m budget_app --data-dir ./demo_data delete --id T9999
 echo $LASTEXITCODE
 ```
- 
+
 ![에러 처리](pictures/09_error_exitcode.png)
- 
+
 - 스택트레이스 대신 `[오류]`(원인)와 `[해결 힌트]`가 출력됩니다.
 - 오류 종료 코드는 `1`, 정상 종료는 `0`입니다.
----
- 
-### 8. 예산과 월별 요약 (10-11)
- 
+
+### 예산과 월별 요약 (사진 10-11)
+
 ```powershell
 python -m budget_app --data-dir ./demo_data summary --month 2026-10 --top 3
 python -m budget_app --data-dir ./demo_data budget set --month 2026-10 --amount 30000
 python -m budget_app --data-dir ./demo_data summary --month 2026-10 --top 3
 python -m budget_app --data-dir ./demo_data summary --month 2020-01
 ```
- 
+
 ![예산과 요약](pictures/10-11_budget_summary.png)
- 
+
 - 예산 설정 전에는 수입, 지출, 잔액, 카테고리별 지출 TOP N만 나옵니다.
 - 예산 설정 후에는 사용률(%)이 추가되고, 초과하면 경고 문구가 출력됩니다.
 - 거래가 없는 달은 `데이터 없음`으로 표시됩니다.
----
- 
-### 9. CSV 가져오기: import (12)
- 
+
+### CSV 가져오기: import (사진 12)
+
 ```powershell
 python -m budget_app --data-dir ./demo_data import --from sample_import.csv
 python -m budget_app --data-dir ./demo_data list
 ```
- 
+
 ![import](pictures/12_import.png)
- 
+
 - CSV 2건이 등록되고 처리 건수가 출력됩니다.
 - 새 거래의 id는 `T0005`, `T0006`입니다. 삭제된 `T0003`의 번호는 다시 쓰지 않고 가장 큰 번호 + 1로 부여합니다.
 - CSV 파일은 UTF-8(BOM 없음)이어야 합니다.
----
- 
-### 10. CSV 내보내기: export (13)
- 
+
+### CSV 내보내기: export (사진 13)
+
 ```powershell
 python -m budget_app --data-dir ./demo_data export --out out_2026-10.csv --month 2026-10
 python -m budget_app --data-dir ./demo_data export --out out_range.csv --from 2026-10-08 --to 2026-10-10
@@ -453,35 +473,35 @@ python -m budget_app --data-dir ./demo_data export --out x.csv
 echo $LASTEXITCODE
 Get-ChildItem *.csv
 ```
- 
+
 ![export](pictures/13_export.png)
- 
+
 - 월 단위(5건)와 기간 단위(3건) 모두 처리 건수와 CSV 내용을 확인할 수 있습니다.
 - `--month` 또는 `--from/--to` 조건이 없으면 에러(종료 코드 `1`)가 나고 파일은 만들어지지 않습니다.
----
- 
-### 11. 영구 저장 확인 (14, 15)
- 
+
+### 영구 저장 확인 (사진 14, 15)
+
 저장 파일의 실제 내용입니다. 한 줄이 JSON 객체 하나인 JSONL 형식입니다.
- 
+
 ```powershell
 Get-ChildItem .\demo_data
 Get-Content .\demo_data\transactions.jsonl -Encoding UTF8
 Get-Content .\demo_data\budgets.jsonl
 Get-Content .\demo_data\categories.jsonl -Encoding UTF8
 ```
- 
+
 ![저장 파일 내용](pictures/14_persist_files.png)
- 
+
 - `tags`는 `["생활비"]`처럼 리스트로 저장되고, 태그가 없으면 `[]`입니다.
 - 삭제, import, 수정 결과가 파일에 그대로 반영되어 있습니다.
+
 터미널을 완전히 종료한 뒤 다시 실행해도 데이터가 유지됩니다.
- 
+
 ```powershell
 python -m budget_app --data-dir ./demo_data list
 python -m budget_app --data-dir ./demo_data summary --month 2026-10
 ```
- 
+
 ![재실행 후 데이터 유지](pictures/15_persist_rerun.png)
- 
-- 8번 항목(10-11) 사진과 총지출이 다른 이유는 그 사이 import로 택시 3,000원이 추가되었기 때문입니다. (64,650원 → 67,650원, 사용률 215.5% → 225.5%)
+
+- '예산과 월별 요약' 항목(사진 10-11)과 총지출이 다른 이유는 그 사이 import로 택시 3,000원이 추가되었기 때문입니다. (64,650원 → 67,650원, 사용률 215.5% → 225.5%)
